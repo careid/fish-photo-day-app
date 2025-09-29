@@ -1,34 +1,59 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [date, setDate] = useState<string>(
+    new Date().toISOString().split('T')[0]
+  );
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container">
+      <h1>Fish Picture of the Day</h1>
+      
+      <div className="upload-section">
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileSelect}
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+
+      {preview && (
+        <div className="preview-section">
+          <h2>Preview for {date}</h2>
+          <img 
+            src={preview} 
+            alt="Fish of the day preview" 
+            style={{ maxWidth: '100%', maxHeight: '500px' }} 
+          />
+        </div>
+      )}
+
+      {!preview && (
+        <div className="empty-state">
+          <p>Select a fish photo to display</p>
+        </div>
+      )}
+    </div>
   )
 }
 

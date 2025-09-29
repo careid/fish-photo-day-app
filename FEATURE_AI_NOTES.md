@@ -1,0 +1,1 @@
+Basic fish photo uploader implemented with date selection and preview functionality. Uses built-in browser file APIs, no additional dependencies required.
